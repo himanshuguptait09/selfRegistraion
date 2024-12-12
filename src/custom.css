@@ -324,3 +324,19 @@ output {
     padding-top: 0;
   }
 }
+
+.input-container {
+  position: relative;
+}
+
+.input-icon {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #999;
+}
+
+.form-control {
+  padding-left: 30px;
+}

@@ -10,6 +10,8 @@ import { CgRecord } from "react-icons/cg";
 import Footer from "../Footer/Footer";
 import { MdOutlineAppRegistration } from "react-icons/md";
 import { RxHamburgerMenu } from "react-icons/rx";
+import { MdDesignServices } from "react-icons/md";
+import { GrServices } from "react-icons/gr";
 
 const AppLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -130,6 +132,25 @@ const AppLayout = () => {
                 {sidebarOpen && <span className="ms-2">Self Registration</span>}
               </NavLink>
             </li>
+
+            <li className="nav-item">
+              <NavLink
+                to="/services"
+                className="nav-link text-white d-flex align-items-center"
+              >
+                <MdDesignServices AppRegistration className="icon" />
+                {sidebarOpen && <span className="ms-2">Services</span>}
+              </NavLink>
+            </li>
+            <li className="nav-item">
+              <NavLink
+                to="/services-group"
+                className="nav-link text-white d-flex align-items-center"
+              >
+                <GrServices AppRegistration className="icon" />
+                {sidebarOpen && <span className="ms-2">Services Group</span>}
+              </NavLink>
+            </li>
           </ul>
         </div>
       </div>
@@ -202,6 +223,7 @@ const AppLayout = () => {
                 <FaUserClock className="me-3" /> Duty Rosters
               </NavLink>
             </li>
+
             <li className="nav-item">
               <NavLink
                 to="/selfregistration"
@@ -209,6 +231,24 @@ const AppLayout = () => {
                 onClick={closeOffcanvas}
               >
                 <FaUserClock className="me-3" /> Self Registration
+              </NavLink>
+            </li>
+            <li className="nav-item">
+              <NavLink
+                to="/services"
+                className="nav-link text-white d-flex align-items-center"
+                onClick={closeOffcanvas}
+              >
+                <MdDesignServices className="me-3" /> Services
+              </NavLink>
+            </li>
+            <li className="nav-item">
+              <NavLink
+                to="/services-group"
+                className="nav-link text-white d-flex align-items-center"
+                onClick={closeOffcanvas}
+              >
+                <GrServices className="me-3" /> Services Group
               </NavLink>
             </li>
           </ul>
