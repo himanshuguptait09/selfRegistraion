@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { InputPicker } from "rsuite";
-// import "./Form.css";
 import { CiCircleInfo } from "react-icons/ci";
-
+import OverlayTrigger from "react-bootstrap/OverlayTrigger";
+import Tooltip from "react-bootstrap/Tooltip";
+import "bootstrap/dist/css/bootstrap.min.css";
+import { Toast } from "primereact/toast";
 const data = [
   "Eugenia",
   "Bryan",
@@ -24,7 +26,7 @@ const Form = () => {
     Status: "Active", // Default
     GroupHead: "",
   });
-  
+
   const [errors, setErrors] = useState({
     GroupName: "",
     GroupshortName: "",
@@ -38,25 +40,17 @@ const Form = () => {
     const { name, value } = e.target;
     const processValue = (value) => {
       const cleanedValue = value.replace(/[^a-zA-Z0-9 ,./\\()\-]/g, "");
-
       const capitalizedValue = cleanedValue.replace(/\b\w/g, (char) =>
         char.toUpperCase()
       );
       const singleSpaceValue = capitalizedValue.replace(/\s{2,}/g, " ");
-
       const trimmedValue = singleSpaceValue.trim();
-
       return trimmedValue;
     };
 
     setErrors((prevErrors) => ({ ...prevErrors, [name]: "" }));
-    if (/^[^a-zA-Z]/.test(value)) {
-      setErrors((prevErrors) => ({
-        ...prevErrors,
-        [name]: "Cannot start with a special character or number.",
-      }));
-      return;
-    }
+    setSubmitted(false); // Reset the submitted state if user starts editing
+
     switch (name) {
       case "GroupName":
       case "GroupshortName": {
@@ -68,16 +62,11 @@ const Form = () => {
             ...prevErrors,
             [name]: "Must be between 3 and 50 characters.",
           }));
-        } else if (/^[^a-zA-Z]/.test(formattedValue)) {
-          setErrors((prevErrors) => ({
-            ...prevErrors,
-            [name]: "Cannot start with a special character or number.",
-          }));
         } else if (!nameValidationRegex.test(formattedValue)) {
           setErrors((prevErrors) => ({
             ...prevErrors,
             [name]:
-              "Must start with a capital letter. Only one space between words, and only valid special characters (, . - / ( )) are allowed.",
+              "Must start with a capital letter. Only one space between words, and valid special characters (, . - / ( )) are allowed.",
           }));
         }
         break;
@@ -97,12 +86,6 @@ const Form = () => {
             ...prevErrors,
             Description: "Only one space is allowed between words.",
           }));
-        } else if (formattedValue.length !== value.length) {
-          setErrors((prevErrors) => ({
-            ...prevErrors,
-            Description:
-              "Special characters and multiple spaces are automatically corrected.",
-          }));
         }
         break;
       }
@@ -119,15 +102,52 @@ const Form = () => {
       GroupHead: value,
     }));
   };
+  const toast = useRef(null);
+  const [submitted, setSubmitted] = useState(false);
+  const handleSave = () => {
+    setSubmitted(true);
+
+    // Basic validation check
+    const newErrors = { ...errors };
+    if (!formData.GroupName) newErrors.GroupName = "This field is required.";
+    if (!formData.GroupshortName)
+      newErrors.GroupshortName = "This field is required.";
+    if (!formData.Description)
+      newErrors.Description = "This field is required.";
+
+    setErrors(newErrors);
+    const hasErrors = Object.values(newErrors).some((error) => error);
+    if (!hasErrors) {
+      // If no errors, show success toast
+      toast.current.show({
+        severity: "success",
+        summary: "Success",
+        detail: "Saved successfully!",
+        life: 3000, // Toast disappears after 3 seconds
+      });
+
+      // Reset form (optional)
+      setFormData({
+        Location: "",
+        RevenueSystem: "",
+        GroupName: "",
+        GroupshortName: "",
+        Description: "",
+        Status: "Active",
+        GroupHead: "",
+      });
+      setSubmitted(false); // Reset submission state
+    }
+  };
 
   return (
-    <div className="container-fluid">
+    <div className="container-fluid">      
+      <Toast ref={toast} position="top-right" />
       <div className="breadcrumb-header ms-1 me-1 mt-4">
         <h2 className="fs-4 " style={{ color: "#5E5873" }}>
           Services
         </h2>
       </div>
-
       <div className="card border-0 rounded shadow-lg ms-1 me-1">
         <div className="card-body">
           <div className="row gx-2 gy-3">
@@ -171,63 +191,115 @@ const Form = () => {
               <label htmlFor="GroupName" className="form-label">
                 Name
               </label>
-              <div className="input-container">
+              <div className="input-container position-relative">
                 <input
                   type="text"
-                  className="form-control"
+                  className={`form-control ${
+                    submitted && errors.GroupName ? "error" : ""
+                  }`}
                   id="GroupName"
                   name="GroupName"
                   value={formData.GroupName}
                   onChange={handleChange}
                   placeholder="Name"
                 />
-                <CiCircleInfo className="input-icon" size={20} />
+                <OverlayTrigger
+                  placement="bottom"
+                  overlay={
+                    errors.GroupName ? (
+                      <Tooltip>{errors.GroupName}</Tooltip>
+                    ) : (
+                      <></>
+                    )
+                  }
+                  trigger={["hover", "focus"]}
+                  // show={submitted && errors.GroupName}
+                >
+                  <span
+                    className={`input-icon ${
+                      errors.GroupName ? "error-icon" : ""
+                    }`}
+                  >
+                    <CiCircleInfo size={20} />
+                  </span>
+                </OverlayTrigger>
               </div>
-              {errors.GroupName && (
-                <div className="text-danger">{errors.GroupName}</div>
-              )}
             </div>
 
             <div className="col-md">
               <label htmlFor="GroupshortName" className="form-label">
                 Short Name
               </label>
-              <div className="input-container">
-                <CiCircleInfo className="input-icon" size={20} />
+              <div className="input-container position-relative">
                 <input
                   type="text"
-                  className="form-control"
+                  className={`form-control ${
+                    submitted && errors.GroupshortName ? "error" : ""
+                  }`}
                   id="GroupshortName"
                   name="GroupshortName"
                   value={formData.GroupshortName}
                   onChange={handleChange}
                   placeholder="Short Name"
                 />
+                <OverlayTrigger
+                  placement="bottom"
+                  overlay={
+                    errors.GroupshortName ? (
+                      <Tooltip>{errors.GroupshortName}</Tooltip>
+                    ) : (
+                      <></>
+                    )
+                  }
+                  trigger={["hover", "focus"]}
+                >
+                  <span
+                    className={`input-icon ${
+                      submitted && errors.GroupName ? "error-icon" : ""
+                    }`}
+                  >
+                    <CiCircleInfo size={20} />
+                  </span>
+                </OverlayTrigger>
               </div>
-              {errors.GroupshortName && (
-                <div className="text-danger">{errors.GroupshortName}</div>
-              )}
             </div>
-            {/* Description */}
+
             <div className="col-md">
               <label htmlFor="Description" className="form-label">
                 Description
               </label>
-              <div className="input-container">
-                <CiCircleInfo className="input-icon" size={20} />
+              <div className="input-container position-relative">
                 <input
                   type="text"
-                  className="form-control"
+                  className={`form-control ${
+                    submitted && errors.Description ? "error" : ""
+                  }`}
                   id="Description"
                   name="Description"
                   value={formData.Description}
                   onChange={handleChange}
                   placeholder="Description"
                 />
+                <OverlayTrigger
+                  placement="bottom"
+                  overlay={
+                    errors.GroupName ? (
+                      <Tooltip>{errors.GroupName}</Tooltip>
+                    ) : (
+                      <></>
+                    )
+                  }
+                  trigger={["hover", "focus"]}
+                >
+                  <span
+                    className={`input-icon ${
+                      submitted && errors.GroupName ? "error-icon" : ""
+                    }`}
+                  >
+                    <CiCircleInfo size={20} />
+                  </span>
+                </OverlayTrigger>
               </div>
-              {errors.Description && (
-                <div className="text-danger">{errors.Description}</div>
-              )}
             </div>
 
             <div className="col-md">
@@ -243,7 +315,6 @@ const Form = () => {
                 style={{ width: "100%" }}
               />
             </div>
-
             <div className="col-md">
               <label htmlFor="Status" className="form-label">
                 Status
@@ -262,11 +333,12 @@ const Form = () => {
             </div>
           </div>
           <div className="row mt-3">
-            <div className="col-12 ">
+            <div className="col-12">
               <button
-                className="btn "
+                className="btn"
                 style={{ backgroundColor: "#0AD8B5", color: "white" }}
                 type="button"
+                onClick={handleSave}
               >
                 Save
               </button>
@@ -274,8 +346,8 @@ const Form = () => {
           </div>
         </div>
       </div>
-    </div>
-  );
-};
+    </div>                              
+  );                                     
+};                                         
 
 export default Form;

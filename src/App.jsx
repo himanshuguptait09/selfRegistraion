@@ -6,6 +6,8 @@ import PageNotFound from "./components/HOME/Home";
 import "./custom.css";
 import Form from "./components/Services/Form";
 import ServiceGroup from "./components/Services/ServiceGroup";
+import Cities from "./components/Cities/Cities";
+import AddCities from "./components/Cities/AddCities";
 
 const App = () => {
   const router = createBrowserRouter([
@@ -27,7 +29,15 @@ const App = () => {
         },
         {
           path: "/services-group",
-          element: <ServiceGroup/>,
+          element: <ServiceGroup />,
+        },
+        {
+          path: "/cities",
+          element: <Cities />,
+        },
+        {
+          path: "/cities/add-cities",
+          element: <AddCities />,
         },
       ],
     },

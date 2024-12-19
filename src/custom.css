@@ -1,3 +1,4 @@
+ 
 .body {
   margin: 0;
   padding: 0;
@@ -339,4 +340,12 @@ output {
 
 .form-control {
   padding-left: 30px;
+}
+
+.error {
+  border-color: red !important;
+}
+
+.error-icon svg {
+  color: red !important;
 }
