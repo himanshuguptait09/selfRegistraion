@@ -107,7 +107,7 @@ const ServiceGroup = () => {
     if (!formData.ServiceGroup)
       newErrors.ServiceGroup = "This field is required.";
     if (!formData.GroupshortName)
-      newErrors.GroupshortName = "This field is requiredss.";
+      newErrors.GroupshortName = "This field is required.";
     // if (!formData.Description)
     //   newErrors.Description = "This field is required.";
     if (!formData.ServiceName)
@@ -428,7 +428,7 @@ const ServiceGroup = () => {
             <div className="row gx-2 gy-3 mt-2">
               <div className="col-md">
                 <label htmlFor="CompilaneCode1" className="form-label">
-                  Compilane Code 1
+                  Compliance Code 1
                 </label>
                 <div className="input-container position-relative">
                   <input
@@ -447,7 +447,7 @@ const ServiceGroup = () => {
               </div>
               <div className="col-md">
                 <label htmlFor="CompilaneCode2" className="form-label">
-                  Compilane Code 2
+                  Compliance Code 2
                 </label>
                 <div className="input-container position-relative">
                   <input
@@ -466,7 +466,7 @@ const ServiceGroup = () => {
               </div>
               <div className="col-md">
                 <label htmlFor="CompilaneCode3" className="form-label">
-                  Compilane Code 3
+                  Compliance Code 3
                 </label>
                 <div className="input-container position-relative">
                   <input

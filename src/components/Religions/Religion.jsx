@@ -1,73 +1,17 @@
-import React, { useEffect, useState, useMemo } from "react";
-import { InputPicker } from "rsuite";
-import { Paginator } from "primereact/paginator";
-import "bootstrap/dist/css/bootstrap.min.css";
+import React, { useMemo, useState } from "react";
+import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { filterCities } from "../../redux/Slice";
-import { FaEdit } from "react-icons/fa";
-
-import { MdPreview } from "react-icons/md";
-
-const Cities = () => {
-  const dispatch = useDispatch();
+import { Paginator } from "primereact/paginator";
+const Religion = () => {
   const [formData, setFormData] = useState({
-    Country: "",
-    State: "",
-    CityName: "",
+    Location: "",
+    Religion: "",
     Status: "Active",
   });
-
-  const [countries, setCountries] = useState([]);
-  const [loadingCountries, setLoadingCountries] = useState(false);
-
-  // Fetch country data from API
-  useEffect(() => {
-    const fetchCountries = async () => {
-      setLoadingCountries(true);
-      try {
-        const response = await fetch(
-          "https://www.freetestapi.com/api/v1/countries?sort=name&order=asc"
-        );
-        const data = await response.json();
-
-        const transformedData = data.map((country) => ({
-          label: country.name,
-          value: country.name,
-        }));
-        setCountries(transformedData);
-      } catch (error) {
-        console.error("Error fetching countries:", error);
-        setCountries([]);
-      } finally {
-        setLoadingCountries(false);
-      }
-    };
-
-    fetchCountries();
-  }, []);
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      [name]: value,
-    }));
-  };
-
-  const handlePickerChange = (value) => {
-    setFormData((prev) => ({
-      ...prev,
-      Country: value,
-    }));
-  };
-
   const locations = useSelector((state) => state.cities.locations);
   const filteredLocations = useSelector(
     (state) => state.cities.filteredLocations
   );
-
   const [first, setFirst] = useState(0);
   const [rows, setRows] = useState(10);
 
@@ -84,28 +28,24 @@ const Cities = () => {
     setFirst(event.first);
     setRows(event.rows);
   };
+  const handleChange = (e) => {
+    const { name, value } = e.target;
 
-  const filterLocations = () => {
-    console.log("Filtering with form data: ", formData);
-    dispatch(filterCities(formData));
-    setFirst(0);
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      [name]: value,
+    }));
   };
-
-  useEffect(() => {
-    if (filteredLocations.length === 0) {
-      console.log("No locations found");
-    }
-  }, [filteredLocations]);
 
   return (
     <div className="container-fluid">
       <div className="breadcrumb-header ms-1 me-1 gap-1 mt-4 justify-content-start align-items-center d-flex">
         <h2 className="fs-4 " style={{ color: "#5E5873" }}>
-          Cities
+          Religion
         </h2>
         <span className="ms-2 me-2 mb-2 text-secondary opacity-75">|</span>
         <Link
-          to="/cities/add-cities"
+          to="/religion/add-religion"
           className="custom-link text-decoration-none mb-1"
         >
           Add New
@@ -117,51 +57,43 @@ const Cities = () => {
         <div className="card-body">
           <div className="row gx-2 gy-3">
             <div className="col-md">
-              <label htmlFor="Country" className="form-label">
-                Country
-              </label>
-              <InputPicker
-                size="lg"
-                placeholder={loadingCountries ? "Loading..." : "Select"}
-                data={countries}
-                value={formData.Country}
-                onChange={handlePickerChange}
-                disabled={loadingCountries}
-                style={{ width: "100%" }}
-              />
-            </div>
-            <div className="col-md">
-              <label htmlFor="State" className="form-label">
-                State
+              <label htmlFor="Location" className="form-label">
+                Location
               </label>
               <select
                 className="form-select"
-                id="State"
-                name="State"
-                value={formData.State}
+                id="Location"
+                name="Location"
+                value={formData.Location}
                 onChange={handleChange}
                 required
               >
                 <option value="">Select</option>
-                <option value="new delhi">new delhi</option>
-                <option value="mumbai">mumbai</option>
-                <option value="chennai">chennai</option>
+                <option value="Refferd">Refferd</option>
+                <option value="Transfer">Transfer</option>
+                <option value="Semi">Semi</option>
               </select>
             </div>
             <div className="col-md">
-              <label htmlFor="CityName" className="form-label">
-                City Name
+              <label htmlFor="Religion" className="form-label">
+                Religion
               </label>
-              <input
-                type="text"
-                className="form-control"
-                id="CityName"
-                name="CityName"
-                value={formData.CityName}
+              <select
+                className="form-select"
+                id="Religion"
+                name="Religion"
+                value={formData.Religion}
                 onChange={handleChange}
-                placeholder="Name"
-              />
+                required
+              >
+                <option value="">Select</option>
+                <option value="Christianity">Christianity</option>
+                <option value="Islam">Islam</option>
+                <option value="Hinduism">Hinduism</option>
+                <option value="Buddhism">Buddhism</option>
+              </select>
             </div>
+
             <div className="col-md">
               <label htmlFor="Status" className="form-label">
                 Status
@@ -184,7 +116,7 @@ const Cities = () => {
                 className="btn"
                 style={{ backgroundColor: "#0AD8B5", color: "white" }}
                 type="button"
-                onClick={filterLocations}
+                //onClick={filterLocations}
               >
                 Search
               </button>
@@ -219,7 +151,7 @@ const Cities = () => {
                     <td>{location.Status}</td>
                     <td>
                       <Link
-                        to="/cities/edit-cities"
+                        to="/religion/edit-religion"
                         state={{ location }}
                         className="custom-link text-decoration-none"
                       >
@@ -229,8 +161,8 @@ const Cities = () => {
                         |
                       </span>
                       <Link
-                        to="/cities/edit-cities"
-                        state={{ location }}
+                        to="/religion/edit-religion"
+                        //state={{ location }}
                         className="custom-link text-decoration-none"
                       >
                         <FaEdit size={20} />
@@ -260,4 +192,4 @@ const Cities = () => {
   );
 };
 
-export default Cities;
+export default Religion;

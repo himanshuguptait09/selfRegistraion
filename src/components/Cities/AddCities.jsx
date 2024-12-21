@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux"; // Importing dispatch
+import React, { useEffect, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { InputPicker } from "rsuite";
-import { CiCircleInfo } from "react-icons/ci";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Tooltip from "react-bootstrap/Tooltip";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { addCity } from "../../redux/Slice"; // Import the action
+import { addCity } from "../../redux/Slice";
+import { Toast } from "primereact/toast";
+import { useNavigate } from "react-router-dom";
 
 const AddCities = () => {
   const [formData, setFormData] = useState({
@@ -22,54 +23,14 @@ const AddCities = () => {
     CityName: "",
   });
   const [submitted, setSubmitted] = useState(false);
+  const toast = useRef(null);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-  const dispatch = useDispatch(); // Setting up dispatch
-  const data = useSelector((state) => state.cities.newdata); // Setting up dispatch
-  console.log(data);
+  const data = useSelector((state) => state.cities.newdata);
 
-  // Input validation regex
   const nameValidationRegex =
     /^[A-Z][a-zA-Z0-9]*(?:[ ,./\\()\-]?[A-Za-z0-9]+)*(?: [A-Z][a-zA-Z0-9]*(?:[ ,./\\()\-]?[A-Za-z0-9]+)*)*$/;
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    const processValue = (value) => {
-      const cleanedValue = value.replace(/[^a-zA-Z0-9 ,./\\()\-]/g, "");
-      const capitalizedValue = cleanedValue.replace(/\b\w/g, (char) =>
-        char.toUpperCase()
-      );
-      const singleSpaceValue = capitalizedValue.replace(/\s{2,}/g, " ");
-      const trimmedValue = singleSpaceValue.trim();
-      return trimmedValue;
-    };
-
-    setErrors((prevErrors) => ({ ...prevErrors, [name]: "" }));
-
-    switch (name) {
-      case "CityName": {
-        const formattedValue = processValue(value);
-        setFormData((prev) => ({ ...prev, [name]: formattedValue }));
-
-        // Validation for CityName
-        if (formattedValue.length < 2 || formattedValue.length > 50) {
-          setErrors((prevErrors) => ({
-            ...prevErrors,
-            [name]: "Must be between 3 and 50 characters.",
-          }));
-        } else if (!nameValidationRegex.test(formattedValue)) {
-          setErrors((prevErrors) => ({
-            ...prevErrors,
-            [name]:
-              "Must start with a capital letter. Only one space between words, and valid special characters (, . - / ( )) are allowed.",
-          }));
-        }
-        break;
-      }
-      default:
-        setFormData((prev) => ({ ...prev, [name]: value }));
-        break;
-    }
-  };
 
   useEffect(() => {
     const fetchCountries = async () => {
@@ -95,47 +56,88 @@ const AddCities = () => {
     fetchCountries();
   }, []);
 
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    const processValue = (value) => {
+      const cleanedValue = value.replace(/[^a-zA-Z0-9 ,./\\()\-]/g, "");
+      const capitalizedValue = cleanedValue.replace(/\b\w/g, (char) =>
+        char.toUpperCase()
+      );
+      const singleSpaceValue = capitalizedValue.replace(/\s{2,}/g, " ");
+      const trimmedValue = singleSpaceValue.trim();
+      return trimmedValue;
+    };
+
+    setErrors((prevErrors) => ({ ...prevErrors, [name]: "" }));
+    setSubmitted(false); // Reset submitted state when user starts editing
+
+    if (name === "CityName") {
+      const formattedValue = processValue(value);
+      setFormData((prev) => ({ ...prev, [name]: formattedValue }));
+
+      // Validation Rules
+      if (formattedValue.length < 3 || formattedValue.length > 50) {
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          [name]: "City Name must be between 3 and 50 characters.",
+        }));
+      } else if (!nameValidationRegex.test(formattedValue)) {
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          [name]:
+            "City Name must start with a capital letter. Only one space between words, and valid special characters (, . - / ( )) are allowed.",
+        }));
+      }
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    }
+  };
+
   const handlePickerChange = (value) => {
     setFormData((prev) => ({
       ...prev,
       Country: value,
     }));
   };
-
-  // Add city handler
   const handleAdd = () => {
     setSubmitted(true);
 
-    // Basic validation
     const newErrors = { ...errors };
     if (!formData.Country) newErrors.Country = "This field is required.";
     if (!formData.State) newErrors.State = "This field is required.";
     if (!formData.CityName) newErrors.CityName = "This field is required.";
 
     setErrors(newErrors);
-
     const hasErrors = Object.values(newErrors).some((error) => error);
 
-    if (!hasErrors) {
-      // Dispatch action to add city to Redux store
-      dispatch(addCity(formData));
-
-      // Reset the form data and errors after successful add
-      setFormData({
-        Country: "",
-        State: "",
-        CityName: "",
-        Status: "Active",
+    if (hasErrors) {
+      toast.current.show({
+        severity: "error",
+        summary: "Alert!",
+        detail: "Please fill all required fields.",
+        life: 3000,
       });
-      setSubmitted(false); // Reset submission state
+      return;
     }
+
+    dispatch(addCity(formData));
+    setFormData({
+      Country: "",
+      State: "",
+      CityName: "",
+      Status: "Active",
+    });
+
+    setSubmitted(false);
+    navigate("/cities");
   };
-  console.log(formData);
 
   return (
     <div className="container-fluid">
+      <Toast ref={toast} position="top-right" />
       <div className="breadcrumb-header ms-1 me-1 gap-1 mt-4 justify-content-start align-items-center d-flex">
-        <h2 className="fs-4 " style={{ color: "#5E5873" }}>
+        <h2 className="fs-4" style={{ color: "#5E5873" }}>
           Add Cities
         </h2>
       </div>
@@ -146,78 +148,95 @@ const AddCities = () => {
               <label htmlFor="Country" className="form-label">
                 Country
               </label>
-              <InputPicker
-                size="lg"
-                placeholder={loadingCountries ? "Loading..." : "Select"}
-                data={countries}
-                value={formData.Country}
-                onChange={handlePickerChange}
-                disabled={loadingCountries}
-                style={{ width: "100%" }}
-                className={`form-select ${
-                  submitted && errors.Country ? "error" : ""
-                }`}
-              />
-            </div>
-            <div className="col-md">
-              <label htmlFor="State" className="form-label">
-                State
-              </label>
-              <select
-                className={`form-select ${
-                  submitted && errors.State ? "error" : ""
-                }`}
-                id="State"
-                name="State"
-                value={formData.State}
-                onChange={handleChange}
-                required
+              <OverlayTrigger
+                placement="bottom"
+                overlay={
+                  submitted && errors.Country ? (
+                    <Tooltip>{errors.Country}</Tooltip>
+                  ) : (
+                    <></>
+                  )
+                }
               >
-                <option value="">Select</option>
-                <option value="Referred">new delhi</option>
-                <option value="Direct">mumbai</option>
-                <option value="Referred">chennai</option>
-                <option value="Referred">new delhi</option>
-                <option value="Direct">Direct</option>
-              </select>
+                <div>
+                  <InputPicker
+                    size="lg"
+                    placeholder={loadingCountries ? "Loading..." : "Select"}
+                    data={countries}
+                    value={formData.Country}
+                    onChange={handlePickerChange}
+                    disabled={loadingCountries}
+                    style={{
+                      width: "100%",
+                      borderColor:
+                        submitted && errors.Country ? "red" : "default",
+                    }}
+                    className={`${
+                      submitted && errors.Country ? "is-invalid" : ""
+                    }`}
+                  />
+                </div>
+              </OverlayTrigger>
             </div>
+
+            <div className="col-md">
+              <label htmlFor="State">State</label>
+              <OverlayTrigger
+                placement="bottom"
+                overlay={
+                  submitted && errors.State ? (
+                    <Tooltip>{errors.State}</Tooltip>
+                  ) : (
+                    <></>
+                  )
+                }
+              >
+                <select
+                  id="State"
+                  name="State"
+                  className={`form-select ${
+                    submitted && errors.State ? "is-invalid" : ""
+                  }`}
+                  value={formData.State}
+                  onChange={handleChange}
+                  style={{ marginTop: "9px" }}
+                >
+                  <option value="">Select</option>
+                  <option value="new delhi">New Delhi</option>
+                  <option value="mumbai">Mumbai</option>
+                  <option value="chennai">Chennai</option>
+                </select>
+              </OverlayTrigger>
+            </div>
+
             <div className="col-md">
               <label htmlFor="CityName" className="form-label">
                 City Name
               </label>
-              <div className="input-container position-relative">
+              <OverlayTrigger
+                placement="bottom"
+                overlay={
+                  submitted && errors.CityName ? (
+                    <Tooltip>{errors.CityName}</Tooltip>
+                  ) : (
+                    <></>
+                  )
+                }
+              >
                 <input
                   type="text"
                   className={`form-control ${
-                    submitted && errors.CityName ? "error" : ""
+                    submitted && errors.CityName ? "is-invalid" : ""
                   }`}
                   id="CityName"
                   name="CityName"
                   value={formData.CityName}
                   onChange={handleChange}
-                  placeholder="Name"
+                  placeholder="City Name"
                 />
-                <OverlayTrigger
-                  placement="bottom"
-                  overlay={
-                    errors.CityName ? (
-                      <Tooltip>{errors.CityName}</Tooltip>
-                    ) : (
-                      <></>
-                    )
-                  }
-                  trigger={["hover", "focus"]}
-                >
-                  <span
-                    className={`input-icon ${
-                      errors.CityName ? "error-icon" : ""
-                    }`}
-                  >
-                    <CiCircleInfo size={20} />
-                  </span>
-                </OverlayTrigger>
-              </div>
+              </OverlayTrigger>
             </div>
+
             <div className="col-md">
               <label htmlFor="Status" className="form-label">
                 Status
@@ -234,6 +253,7 @@ const AddCities = () => {
               </select>
             </div>
           </div>
+
           <div className="row mt-3">
             <div className="col-12">
               <button

@@ -12,6 +12,7 @@ import { MdOutlineAppRegistration } from "react-icons/md";
 import { RxHamburgerMenu } from "react-icons/rx";
 import { MdDesignServices } from "react-icons/md";
 import { GrServices } from "react-icons/gr";
+import { GiGreekTemple } from "react-icons/gi";
 import { FaCity } from "react-icons/fa";
 const AppLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -155,8 +156,17 @@ const AppLayout = () => {
                 to="/cities"
                 className="nav-link text-white d-flex align-items-center"
               >
-                <FaCity  AppRegistration className="icon" />
+                <FaCity AppRegistration className="icon" />
                 {sidebarOpen && <span className="ms-2">Cities </span>}
+              </NavLink>
+            </li>
+            <li className="nav-item">
+              <NavLink
+                to="/religion"
+                className="nav-link text-white d-flex align-items-center"
+              >
+                <GiGreekTemple AppRegistration className="icon" />
+                {sidebarOpen && <span className="ms-2">Religion </span>}
               </NavLink>
             </li>
           </ul>
@@ -265,7 +275,16 @@ const AppLayout = () => {
                 className="nav-link text-white d-flex align-items-center"
                 onClick={closeOffcanvas}
               >
-                <FaCity  className="me-3" /> Cities
+                <FaCity className="me-3" /> Cities
+              </NavLink>
+            </li>
+            <li className="nav-item">
+              <NavLink
+                to="/religion"
+                className="nav-link text-white d-flex align-items-center"
+                onClick={closeOffcanvas}
+              >
+                <GiGreekTemple className="me-3" /> Religion
               </NavLink>
             </li>
           </ul>

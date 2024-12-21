@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  locations: [], // Starting with an empty array
+  locations: [],
   filteredLocations: [],
   newdata: [],
 };
@@ -10,33 +10,47 @@ const citiesSlice = createSlice({
   name: "cities",
   initialState,
   reducers: {
-    // Action to set cities list
     setCities: (state, action) => {
       state.locations = action.payload;
     },
-    // Action to add a new city
+
     addCity: (state, action) => {
-      state.locations.push(action.payload); // Adds the new city to the array
-      state.newdata = action.payload;
+      const newCity = {
+        ...action.payload,
+        cityName: action.payload.CityName,
+      };
+      state.locations.push(newCity);
+      state.newdata = newCity;
     },
-    // Filter cities by provided criteria
+
+    updatedcity: (state, action) => {
+      const updatedCity = action.payload;
+      const index = state.locations.findIndex(
+        (loc) => loc.locationId === updatedCity.locationId
+      );
+      if (index !== -1) {
+        // Use consistent property naming: cityName
+        state.locations[index].cityName = updatedCity.cityName;
+        state.locations[index] = updatedCity;
+      }
+    },
+
     filterCities: (state, action) => {
-      const { Country, State, CityName, Status } = action.payload;
+      const { Country, State, cityName, Status } = action.payload;
       state.filteredLocations = state.locations.filter((location) => {
         return (
-          (!Country ||
-            location.Country.toLowerCase() === Country.toLowerCase()) &&
-          (!State ||
-            location.State.toLowerCase().includes(State.toLowerCase())) &&
-          (!CityName ||
-            location.cityName.toLowerCase().includes(CityName.toLowerCase())) &&
-          (!Status || location.status.toLowerCase() === Status.toLowerCase())
+          (!Country || location.Country.toLowerCase() === Country.toLowerCase()) &&
+          (!State || location.State.toLowerCase().includes(State.toLowerCase())) &&
+          (!cityName || location.cityName.toLowerCase().includes(cityName.toLowerCase())) &&
+          (!Status || location.Status.toLowerCase() === Status.toLowerCase())
         );
       });
-    },
+    }
+    
   },
 });
 
-export const { setCities, addCity, filterCities } = citiesSlice.actions;
+export const { setCities, addCity, filterCities, updatedcity } =
+  citiesSlice.actions;
 
 export default citiesSlice.reducer;

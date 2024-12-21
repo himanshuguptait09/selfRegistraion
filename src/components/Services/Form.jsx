@@ -121,7 +121,7 @@ const Form = () => {
       // If no errors, show success toast
       toast.current.show({
         severity: "success",
-        summary: "Success",
+        summary: "Saved Successfully",
         detail: "Saved successfully!",
         life: 3000, // Toast disappears after 3 seconds
       });
@@ -136,12 +136,19 @@ const Form = () => {
         Status: "Active",
         GroupHead: "",
       });
-      setSubmitted(false); // Reset submission state
+      setSubmitted(false);
+    } else {
+      toast.current.show({
+        severity: "error",
+        summary: "Alert!",
+        detail: "Please fill all required feild",
+        life: 3000,
+      });
     }
   };
 
   return (
-    <div className="container-fluid">      
+    <div className="container-fluid">
       <Toast ref={toast} position="top-right" />
       <div className="breadcrumb-header ms-1 me-1 mt-4">
         <h2 className="fs-4 " style={{ color: "#5E5873" }}>
@@ -346,8 +353,8 @@ const Form = () => {
           </div>
         </div>
       </div>
-    </div>                              
-  );                                     
-};                                         
+    </div>
+  );
+};
 
 export default Form;
