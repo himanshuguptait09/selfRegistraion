@@ -1,15 +1,17 @@
 import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
-  locations: [],
-  filteredLocations: [],
-  newdata: [],
+  religions: [],
+  filteredReligions: [],
+  newReligion: [],
 };
-const ReligionSlice = createSlice({
-  name: "religion",
+console.log(initialState.religions);
+
+const religionsSlice = createSlice({
+  name: "religions",
   initialState,
   reducers: {
-    setReligion: (state, action) => {
-      state.locations = action.payload;
+    setReligions: (state, action) => {
+      state.religions = action.payload;
     },
 
     addReligion: (state, action) => {
@@ -17,35 +19,41 @@ const ReligionSlice = createSlice({
         ...action.payload,
         Religion: action.payload.Religion,
       };
-      state.locations.push(newReligion);
-      state.newdata = newCity;
+      state.religions.push(newReligion);
+      state.newReligion = newReligion;
+      console.log(state.religions);
     },
 
     updatedReligion: (state, action) => {
       const updatedReligion = action.payload;
-      const index = state.locations.findIndex(
-        (loc) => loc.locationId === updatedReligion.locationId
+      const index = state.religions.findIndex(
+        (rel) => rel.religionId === updatedReligion.religionId
       );
       if (index !== -1) {
-        state.locations[index].ReligionName = updatedReligion.ReligionName;
-        state.locations[index] = updatedReligion;
+        state.religions[index].ReligionName = updatedReligion.ReligionName;
+        state.religions[index] = updatedReligion;
       }
     },
 
     filterReligion: (state, action) => {
+      console.log(state.religions);
+
       const { Location, Religion, Status } = action.payload;
-      state.filteredLocations = state.locations.filter((location) => {
+      state.filteredReligions = state.religions.filter((religion) => {
         return (
           (!Location ||
-            location.Country.toLowerCase() === Country.toLowerCase()) &&
+            religion.Location?.toLowerCase() === Location.toLowerCase()) &&
           (!Religion ||
-            location.State.toLowerCase().includes(State.toLowerCase())) &&
-          (!Status || location.Status.toLowerCase() === Status.toLowerCase())
+            religion.Religion?.toLowerCase() === Religion.toLowerCase()) &&
+          (!Status || religion?.Status.toLowerCase() === Status.toLowerCase())
         );
       });
+      //console.log("Filtering with:", action.payload);
     },
   },
 });
-export const { setReligion, addReligion, updatedReligion } =
-  ReligionSlice.actions;
-export default ReligionSlice.reducer;
+
+export const { setReligions, addReligion, filterReligion, updatedReligion } =
+  religionsSlice.actions;
+
+export default religionsSlice.reducer;

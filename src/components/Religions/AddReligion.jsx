@@ -1,13 +1,11 @@
-import React, { useEffect, useRef, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { InputPicker } from "rsuite";
-import OverlayTrigger from "react-bootstrap/OverlayTrigger";
-import Tooltip from "react-bootstrap/Tooltip";
+import React, { useRef, useState } from "react";
+//import OverlayTrigger from "react-bootstrap/OverlayTrigger";
+//import Tooltip from "react-bootstrap/Tooltip";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { addCity } from "../../redux/Slice";
+import { addReligion } from "../../redux/ReligionSlice";
 import { Toast } from "primereact/toast";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-
 const AddReligion = () => {
   const [formData, setFormData] = useState({
     Location: "",
@@ -20,12 +18,10 @@ const AddReligion = () => {
     Religion: "",
     Status: "",
   });
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [submitted, setSubmitted] = useState(false);
   const toast = useRef(null);
-  //  const dispatch = useDispatch();
-  //  const navigate = useNavigate();
-
-  //  const data = useSelector((state) => state.cities.newdata);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -35,7 +31,6 @@ const AddReligion = () => {
 
   const handleAdd = () => {
     setSubmitted(true);
-
     const newErrors = { ...errors };
     if (!formData.Location) newErrors.Location = "This field is required.";
     if (!formData.Religion) newErrors.Religion = "This field is required.";
@@ -54,16 +49,27 @@ const AddReligion = () => {
       return;
     }
 
-    dispatch(addCity(formData));
+    const newReligion = {
+      Location: formData.Location,
+      Religion: formData.Religion, // Fixed typo here
+      Status: formData.Status,
+    };
+
+    dispatch(addReligion(newReligion));
     setFormData({
-      Country: "",
-      State: "",
-      CityName: "",
-      Status: "Active",
+      Location: "",
+      Religion: "",
+      Status: "Active", // Reset only fields related to this form
     });
 
     setSubmitted(false);
-    navigate("/cities");
+    toast.current.show({
+      severity: "success",
+      summary: "Success!",
+      detail: "Religion added successfully.",
+      life: 3000,
+    });
+    navigate("/religion");
   };
 
   return (
@@ -90,13 +96,19 @@ const AddReligion = () => {
                 required
               >
                 <option value="">Select</option>
-                <option value="Refferd">Refferd</option>
+                <option value="Referred">Referred</option>
                 <option value="Transfer">Transfer</option>
                 <option value="Semi">Semi</option>
               </select>
+              {errors.Location && (
+                <small className="text-danger">{errors.Location}</small>
+              )}
             </div>
+
             <div className="col-md">
-              <label htmlFor="Religion">Religion</label>
+              <label htmlFor="Religion" className="form-label">
+                Religion
+              </label>
               <select
                 className="form-select"
                 id="Religion"
@@ -104,7 +116,6 @@ const AddReligion = () => {
                 value={formData.Religion}
                 onChange={handleChange}
                 required
-                style={{ marginTop: "9px" }}
               >
                 <option value="">Select</option>
                 <option value="Christianity">Christianity</option>
@@ -112,7 +123,11 @@ const AddReligion = () => {
                 <option value="Hinduism">Hinduism</option>
                 <option value="Buddhism">Buddhism</option>
               </select>
+              {errors.Religion && (
+                <small className="text-danger">{errors.Religion}</small>
+              )}
             </div>
+
             <div className="col-md">
               <label htmlFor="Status" className="form-label">
                 Status

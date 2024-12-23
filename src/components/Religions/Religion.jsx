@@ -1,40 +1,52 @@
 import React, { useMemo, useState } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import { Paginator } from "primereact/paginator";
+import { filterReligion } from "../../redux/ReligionSlice";
+import { FaEdit } from "react-icons/fa";
+import { MdPreview } from "react-icons/md";
 const Religion = () => {
+  const dispatch = useDispatch();
+
+  const religions = useSelector((state) => state.religions.religions || []);
+  //console.log(religions);
+
+  const filteredReligions = useSelector(
+    (state) => state.religions.filteredReligions || []
+  );
   const [formData, setFormData] = useState({
     Location: "",
     Religion: "",
     Status: "Active",
   });
-  const locations = useSelector((state) => state.cities.locations);
-  const filteredLocations = useSelector(
-    (state) => state.cities.filteredLocations
-  );
   const [first, setFirst] = useState(0);
   const [rows, setRows] = useState(10);
 
-  const locationsToDisplay =
-    filteredLocations.length > 0 ? filteredLocations : locations;
+  const religionsToDisplay =
+    filteredReligions.length > 0 ? filteredReligions : religions;
 
-  const totalRecords = locationsToDisplay.length;
+  const totalRecords = religionsToDisplay.length;
 
-  const paginatedLocations = useMemo(() => {
-    return locationsToDisplay.slice(first, first + rows);
-  }, [locationsToDisplay, first, rows]);
+  const paginatedReligions = useMemo(() => {
+    return religionsToDisplay.slice(first, first + rows);
+  }, [religionsToDisplay, first, rows]);
 
-  const onPageChange = (event) => {
-    setFirst(event.first);
-    setRows(event.rows);
-  };
   const handleChange = (e) => {
     const { name, value } = e.target;
-
     setFormData((prevFormData) => ({
       ...prevFormData,
       [name]: value,
     }));
+    console.log("Form Data Updated:", { ...formData, [name]: value });
+  };
+
+  const handleSearch = () => {
+    dispatch(filterReligion(formData));
+    setFirst(0);
+  };
+  const onPageChange = (event) => {
+    setFirst(event.first);
+    setRows(event.rows);
   };
 
   return (
@@ -51,8 +63,6 @@ const Religion = () => {
           Add New
         </Link>
       </div>
-
-      {/* Search Form */}
       <div className="card border-0 rounded shadow-lg ms-1 me-1">
         <div className="card-body">
           <div className="row gx-2 gy-3">
@@ -116,7 +126,7 @@ const Religion = () => {
                 className="btn"
                 style={{ backgroundColor: "#0AD8B5", color: "white" }}
                 type="button"
-                //onClick={filterLocations}
+                onClick={handleSearch} // Trigger filter action
               >
                 Search
               </button>
@@ -127,32 +137,30 @@ const Religion = () => {
 
       {/* Table */}
       <div className="card mt-4 border-0 ms-1 me-1 rounded shadow">
-        <h4 className="table-header p-3 fs-5">List of Cities</h4>
+        <h4 className="table-header p-3 fs-5">List of Religions</h4>
         <div className="table-responsive">
           <table className="table table-info table-striped text-center table-hover">
             <thead>
               <tr>
                 <th>S.No</th>
-                <th>Country</th>
-                <th>State</th>
-                <th>City Name</th>
+                <th>Location</th>
+                <th>Religion</th>
                 <th>Status</th>
                 <th>Action</th>
               </tr>
             </thead>
             <tbody>
-              {paginatedLocations.length > 0 ? (
-                paginatedLocations.map((location, index) => (
-                  <tr key={location.locationId}>
+              {paginatedReligions.length > 0 ? (
+                paginatedReligions.map((religion, index) => (
+                  <tr key={religion.religionId}>
                     <td>{first + index + 1}</td>
-                    <td>{location.Country}</td>
-                    <td>{location.State}</td>
-                    <td>{location.cityName}</td>
-                    <td>{location.Status}</td>
+                    <td>{religion.Location}</td>
+                    <td>{religion.Religion}</td>
+                    <td>{religion.Status}</td>
                     <td>
                       <Link
-                        to="/religion/edit-religion"
-                        state={{ location }}
+                        to="/religion/show-religion"
+                        //state={{ religion }}
                         className="custom-link text-decoration-none"
                       >
                         <MdPreview size={25} />
@@ -162,7 +170,7 @@ const Religion = () => {
                       </span>
                       <Link
                         to="/religion/edit-religion"
-                        //state={{ location }}
+                        state={{ religion }}
                         className="custom-link text-decoration-none"
                       >
                         <FaEdit size={20} />
@@ -173,7 +181,7 @@ const Religion = () => {
               ) : (
                 <tr>
                   <td colSpan="6" className="text-center">
-                    No Locations Found
+                    No Religions Found
                   </td>
                 </tr>
               )}
