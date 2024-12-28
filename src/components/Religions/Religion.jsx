@@ -27,10 +27,6 @@ const Religion = () => {
 
   const totalRecords = religionsToDisplay.length;
 
-  const paginatedReligions = useMemo(() => {
-    return religionsToDisplay.slice(first, first + rows);
-  }, [religionsToDisplay, first, rows]);
-
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevFormData) => ({
@@ -48,6 +44,9 @@ const Religion = () => {
     setFirst(event.first);
     setRows(event.rows);
   };
+  const paginatedReligions = useMemo(() => {
+    return religionsToDisplay.slice(first, first + rows);
+  }, [religionsToDisplay, first, rows]);
 
   return (
     <div className="container-fluid">
@@ -79,7 +78,7 @@ const Religion = () => {
                 required
               >
                 <option value="">Select</option>
-                <option value="Refferd">Refferd</option>
+                <option value="Referred">Referred</option>
                 <option value="Transfer">Transfer</option>
                 <option value="Semi">Semi</option>
               </select>

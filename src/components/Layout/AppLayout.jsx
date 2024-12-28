@@ -8,7 +8,10 @@ import { FaUserDoctor, FaLocationDot, FaMapLocationDot } from "react-icons/fa6";
 import { RxCross2 } from "react-icons/rx";
 import { CgRecord } from "react-icons/cg";
 import Footer from "../Footer/Footer";
-import { MdOutlineAppRegistration } from "react-icons/md";
+import {
+  MdOutlineAppRegistration,
+  MdOutlineCastForEducation,
+} from "react-icons/md";
 import { RxHamburgerMenu } from "react-icons/rx";
 import { MdDesignServices } from "react-icons/md";
 import { GrServices } from "react-icons/gr";
@@ -169,6 +172,15 @@ const AppLayout = () => {
                 {sidebarOpen && <span className="ms-2">Religion </span>}
               </NavLink>
             </li>
+            <li className="nav-item">
+              <NavLink
+                to="/qualification"
+                className="nav-link text-white d-flex align-items-center"
+              >
+                <MdOutlineCastForEducation AppRegistration className="icon" />
+                {sidebarOpen && <span className="ms-2">Qualification </span>}
+              </NavLink>
+            </li>
           </ul>
         </div>
       </div>
@@ -285,6 +297,15 @@ const AppLayout = () => {
                 onClick={closeOffcanvas}
               >
                 <GiGreekTemple className="me-3" /> Religion
+              </NavLink>
+            </li>
+            <li className="nav-item">
+              <NavLink
+                to="/qualification"
+                className="nav-link text-white d-flex align-items-center"
+                onClick={closeOffcanvas}
+              >
+                <MdOutlineCastForEducation className="me-3" /> Qualification
               </NavLink>
             </li>
           </ul>

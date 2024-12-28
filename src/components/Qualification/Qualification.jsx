@@ -1,161 +1,129 @@
-import React, { useEffect, useState, useMemo } from "react";
-import { InputPicker } from "rsuite";
-import { Paginator } from "primereact/paginator";
-import "bootstrap/dist/css/bootstrap.min.css";
-import { Link } from "react-router-dom";
+import React, { useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { filterCities } from "../../redux/Slice";
+import { Link } from "react-router-dom";
+import { Paginator } from "primereact/paginator";
+import { filterqualifications } from "../../redux/QualificationSlice";
 import { FaEdit } from "react-icons/fa";
 import { MdPreview } from "react-icons/md";
 
-const Cities = () => {
+const Qualification = () => {
   const dispatch = useDispatch();
+  const qualifications = useSelector((state) => state.qualifications);
   const [formData, setFormData] = useState({
-    Country: "",
-    State: "",
-    CityName: "",
+    Location: "",
+    DegreeName: "",
+    DegreeShortName: "",
+    Description: "",
     Status: "Active",
   });
+  const [first, setFirst] = useState(0);
+  const [rows, setRows] = useState(10);
 
-  const [countries, setCountries] = useState([]);
-  const [loadingCountries, setLoadingCountries] = useState(false);
+  const qualificationsToDisplay =
+    qualifications.filteredqualifications.length > 0
+      ? qualifications.filteredqualifications
+      : qualifications.qualifications;
 
-  useEffect(() => {
-    const fetchCountries = async () => {
-      setLoadingCountries(true);
-      try {
-        const response = await fetch(
-          "https://www.freetestapi.com/api/v1/countries?sort=name&order=asc"
-        );
-        const data = await response.json();
-        const transformedData = data.map((country) => ({
-          label: country.name,
-          value: country.name,
-        }));
-        setCountries(transformedData);
-      } catch (error) {
-        console.error("Error fetching countries:", error);
-        setCountries([]);
-      } finally {
-        setLoadingCountries(false);
-      }
-    };
-
-    fetchCountries();
-  }, []);
+  const totalRecords = qualificationsToDisplay.length;
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-
     setFormData((prevFormData) => ({
       ...prevFormData,
       [name]: value,
     }));
   };
-
-  const handlePickerChange = (value) => {
-    setFormData((prev) => ({
-      ...prev,
-      Country: value,
-    }));
-  };
-
-  const locations = useSelector((state) => state.cities.locations);
-  const filteredLocations = useSelector(
-    (state) => state.cities.filteredLocations
-  );
-
-  const [first, setFirst] = useState(0);
-  const [rows, setRows] = useState(10);
-
-  const locationsToDisplay =
-    filteredLocations.length > 0 ? filteredLocations : locations;
-
-  const totalRecords = locationsToDisplay.length;
-
-  const paginatedLocations = useMemo(() => {
-    return locationsToDisplay.slice(first, first + rows);
-  }, [locationsToDisplay, first, rows]);
-
-  const filterLocations = () => {
-    console.log("Filtering with form data: ", formData);
-    dispatch(filterCities(formData));
+  const handleSearch = () => {
+    dispatch(filterqualifications(formData));
     setFirst(0);
   };
-
-  useEffect(() => {
-    if (filteredLocations.length === 0) {
-      console.log("No locations found");
-    }
-  }, [filteredLocations]);
   const onPageChange = (event) => {
     setFirst(event.first);
     setRows(event.rows);
   };
-
+  const paginatedqualifications = useMemo(() => {
+    return qualificationsToDisplay.slice(first, first + rows);
+  }, [qualificationsToDisplay, first, rows]);
   return (
     <div className="container-fluid">
       <div className="breadcrumb-header ms-1 me-1 gap-1 mt-4 justify-content-start align-items-center d-flex">
         <h2 className="fs-4 " style={{ color: "#5E5873" }}>
-          Cities
+          Qualification
         </h2>
         <span className="ms-2 me-2 mb-2 text-secondary opacity-75">|</span>
         <Link
-          to="/cities/add-cities"
+          to="/qualification/add-qualification"
           className="custom-link text-decoration-none mb-1"
         >
           Add New
         </Link>
       </div>
-
-      {/* Search Form */}
       <div className="card border-0 rounded shadow-lg ms-1 me-1">
         <div className="card-body">
           <div className="row gx-2 gy-3">
             <div className="col-md">
-              <label htmlFor="Country" className="form-label">
-                Country
-              </label>
-              <InputPicker
-                size="lg"
-                placeholder={loadingCountries ? "Loading..." : "Select"}
-                data={countries}
-                value={formData.Country}
-                onChange={handlePickerChange}
-                disabled={loadingCountries}
-                style={{ width: "100%" }}
-              />
-            </div>
-            <div className="col-md">
-              <label htmlFor="State" className="form-label">
-                State
+              <label htmlFor="Location" className="form-label">
+                Location
               </label>
               <select
                 className="form-select"
-                id="State"
-                name="State"
-                value={formData.State}
+                id="Location"
+                name="Location"
+                value={formData.Location}
                 onChange={handleChange}
                 required
               >
                 <option value="">Select</option>
-                <option value="new delhi">new delhi</option>
-                <option value="mumbai">mumbai</option>
-                <option value="chennai">chennai</option>
+                <option value="Referred">Referred</option>
+                <option value="Transfer">Transfer</option>
+                <option value="Semi">Semi</option>
               </select>
             </div>
             <div className="col-md">
-              <label htmlFor="CityName" className="form-label">
-                City Name
+              <label htmlFor="DegreeName" className="form-label">
+                Degree Name
+              </label>
+              <select
+                className="form-select"
+                id="DegreeName"
+                name="DegreeName"
+                value={formData.DegreeName}
+                onChange={handleChange}
+                required
+              >
+                <option value="">Select</option>
+                <option value="Christianity">Christianity</option>
+                <option value="Islam">Islam</option>
+                <option value="Hinduism">Hinduism</option>
+                <option value="Buddhism">Buddhism</option>
+              </select>
+            </div>
+            <div className="col-md">
+              <label htmlFor="DegreeShortName" className="form-label">
+                Degree ShortName
               </label>
               <input
                 type="text"
                 className="form-control"
-                id="CityName"
-                name="CityName"
-                value={formData.CityName}
+                id="DegreeShortName"
+                name="DegreeShortName"
+                value={formData.DegreeShortName}
                 onChange={handleChange}
                 placeholder="Name"
+              />
+            </div>
+            <div className="col-md">
+              <label htmlFor="Description" className="form-label">
+                Description
+              </label>
+              <input
+                type="text"
+                className="form-control"
+                id="Description"
+                name="Description"
+                value={formData.Description}
+                onChange={handleChange}
+                placeholder="Description"
               />
             </div>
             <div className="col-md">
@@ -180,7 +148,7 @@ const Cities = () => {
                 className="btn"
                 style={{ backgroundColor: "#0AD8B5", color: "white" }}
                 type="button"
-                onClick={filterLocations}
+                onClick={handleSearch} // Trigger filter action
               >
                 Search
               </button>
@@ -191,32 +159,34 @@ const Cities = () => {
 
       {/* Table */}
       <div className="card mt-4 border-0 ms-1 me-1 rounded shadow">
-        <h4 className="table-header p-3 fs-5">List of Cities</h4>
+        <h4 className="table-header p-3 fs-5">List of Religions</h4>
         <div className="table-responsive">
           <table className="table table-info table-striped text-center table-hover">
             <thead>
               <tr>
                 <th>S.No</th>
-                <th>Country</th>
-                <th>State</th>
-                <th>City Name</th>
+                <th>Location</th>
+                <th>DegreeName: </th>
+                <th>DegreeShortName: </th>
+                <th>Description</th>
                 <th>Status</th>
                 <th>Action</th>
               </tr>
             </thead>
             <tbody>
-              {paginatedLocations.length > 0 ? (
-                paginatedLocations.map((location, index) => (
-                  <tr key={location.locationId}>
-                    <td>{first + index + 1}</td>
-                    <td>{location.Country}</td>
-                    <td>{location.State}</td>
-                    <td>{location.cityName}</td>
-                    <td>{location.Status}</td>
+              {paginatedqualifications.length > 0 ? (
+                paginatedqualifications.map((qualification, index) => (
+                  <tr key={qualification.qualificationId}>
+                    <td>{index + 1}</td>
+                    <td>{qualification.Location}</td>
+                    <td>{qualification.DegreeName}</td>
+                    <td>{qualification.DegreeShortName}</td>
+                    <td>{qualification.Description}</td>
+                    <td>{qualification.Status}</td>
                     <td>
                       <Link
-                        to="/cities/edit-cities"
-                        state={{ location }}
+                        to="/qualification/show-qualification"
+                        state={{ qualification }}
                         className="custom-link text-decoration-none"
                       >
                         <MdPreview size={25} />
@@ -225,8 +195,8 @@ const Cities = () => {
                         |
                       </span>
                       <Link
-                        to="/cities/edit-cities"
-                        state={{ location }}
+                        to="/qualification/edit-qualification"
+                        state={{ qualification }}
                         className="custom-link text-decoration-none"
                       >
                         <FaEdit size={20} />
@@ -237,7 +207,7 @@ const Cities = () => {
               ) : (
                 <tr>
                   <td colSpan="6" className="text-center">
-                    No Locations Found
+                    No Religions Found
                   </td>
                 </tr>
               )}
@@ -256,4 +226,4 @@ const Cities = () => {
   );
 };
 
-export default Cities;
+export default Qualification;

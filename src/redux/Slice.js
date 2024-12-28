@@ -29,7 +29,6 @@ const citiesSlice = createSlice({
         (loc) => loc.locationId === updatedCity.locationId
       );
       if (index !== -1) {
-        // Use consistent property naming: cityName
         state.locations[index].cityName = updatedCity.cityName;
         state.locations[index] = updatedCity;
       }
@@ -39,14 +38,16 @@ const citiesSlice = createSlice({
       const { Country, State, cityName, Status } = action.payload;
       state.filteredLocations = state.locations.filter((location) => {
         return (
-          (!Country || location.Country.toLowerCase() === Country.toLowerCase()) &&
-          (!State || location.State.toLowerCase().includes(State.toLowerCase())) &&
-          (!cityName || location.cityName.toLowerCase().includes(cityName.toLowerCase())) &&
+          (!Country ||
+            location.Country.toLowerCase() === Country.toLowerCase()) &&
+          (!State ||
+            location.State.toLowerCase().includes(State.toLowerCase())) &&
+          (!cityName ||
+            location.cityName.toLowerCase().includes(cityName.toLowerCase())) &&
           (!Status || location.Status.toLowerCase() === Status.toLowerCase())
         );
       });
-    }
-    
+    },
   },
 });
 

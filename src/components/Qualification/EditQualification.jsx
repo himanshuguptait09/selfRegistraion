@@ -2,42 +2,43 @@ import React, { useRef, useState, useEffect } from "react";
 import { Toast } from "primereact/toast";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { updatedReligion } from "../../redux/ReligionSlice";
-
-const EditReligion = () => {
+import { updatedqualifications } from "../../redux/QualificationSlice";
+const EditQualification = () => {
   const location = useLocation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const religionToEdit = location.state?.religion;
+  const qualificationToEdit = location.state?.qualification;
   const [formData, setFormData] = useState({
     Location: "",
-    Religion: "",
+    DegreeName: "",
+    DegreeShortName: "",
+    Description: "",
     Status: "Active",
   });
   const [errors, setErrors] = useState({
     Location: "",
-    Religion: "",
+    DegreeName: "",
+    DegreeShortName: "",
+    Description: "",
     Status: "",
   });
-
+  const toast = useRef(null);
   useEffect(() => {
-    if (religionToEdit) {
+    if (qualificationToEdit) {
       setFormData({
-        Location: religionToEdit.Location || "",
-        Religion: religionToEdit.Religion || "",
-        Status: religionToEdit.Status || "Active",
+        Location: qualificationToEdit.Location || "",
+        DegreeName: qualificationToEdit.DegreeName || "",
+        DegreeShortName: qualificationToEdit.DegreeShortName || "",
+        Description: qualificationToEdit.Description || "",
+        Status: qualificationToEdit.Status || "Active",
       });
     }
-  }, [religionToEdit]);
-
+  }, [qualificationToEdit]);
   const handleChange = (e) => {
     const { name, value } = e.target;
     setErrors((prev) => ({ ...prev, [name]: "" }));
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
-
-  const toast = useRef(null);
-
   const handleUpdate = () => {
     const newErrors = {};
 
@@ -45,8 +46,14 @@ const EditReligion = () => {
     if (!formData.Location) {
       newErrors.Location = "This field is required.";
     }
-    if (!formData.Religion) {
-      newErrors.Religion = "This field is required.";
+    if (!formData.DegreeName) {
+      newErrors.DegreeName = "This field is required.";
+    }
+    if (!formData.DegreeShortName) {
+      newErrors.DegreeShortName = "This field is required.";
+    }
+    if (!formData.Description) {
+      newErrors.Description = "This field is required.";
     }
     if (!formData.Status) {
       newErrors.Status = "This field is required.";
@@ -56,21 +63,20 @@ const EditReligion = () => {
 
     const hasErrors = Object.values(newErrors).some((error) => error);
     if (!hasErrors) {
-      const updatedReligionData = {
+      const updatedqualificationData = {
         ...formData,
-        locationId: religionToEdit?.locationId,
+        locationId: qualificationToEdit?.locationId,
       };
-      dispatch(updatedReligion(updatedReligionData));
+      dispatch(updatedqualifications(updatedqualificationData));
       toast.current.show({
         severity: "success",
         summary: "Success",
         detail: "Religion updated successfully",
         life: 3000,
       });
-      navigate("/religion");
+      navigate("/qualification");
     }
   };
-
   return (
     <div className="container-fluid">
       <Toast ref={toast} position="top-right" />
@@ -103,16 +109,15 @@ const EditReligion = () => {
                 <small className="text-danger">{errors.Location}</small>
               )}
             </div>
-
             <div className="col-md">
-              <label htmlFor="Religion" className="form-label">
-                Religion
+              <label htmlFor="DegreeName" className="form-label">
+                Degree Name
               </label>
               <select
                 className="form-select"
-                id="Religion"
-                name="Religion"
-                value={formData.Religion}
+                id="DegreeName"
+                name="DegreeName"
+                value={formData.DegreeName}
                 onChange={handleChange}
                 required
               >
@@ -122,11 +127,44 @@ const EditReligion = () => {
                 <option value="Hinduism">Hinduism</option>
                 <option value="Buddhism">Buddhism</option>
               </select>
-              {errors.Religion && (
-                <small className="text-danger">{errors.Religion}</small>
+              {errors.DegreeName && (
+                <small className="text-danger">{errors.DegreeName}</small>
               )}
             </div>
-
+            <div className="col-md">
+              <label htmlFor="DegreeShortName" className="form-label">
+                Degree ShortName
+              </label>
+              <input
+                type="text"
+                className="form-control"
+                id="DegreeShortName"
+                name="DegreeShortName"
+                value={formData.DegreeShortName}
+                onChange={handleChange}
+                placeholder="Name"
+              />
+              {errors.DegreeShortName && (
+                <small className="text-danger">{errors.DegreeShortName}</small>
+              )}
+            </div>
+            <div className="col-md">
+              <label htmlFor="Description" className="form-label">
+                Description
+              </label>
+              <input
+                type="text"
+                className="form-control"
+                id="Description"
+                name="Description"
+                value={formData.Description}
+                onChange={handleChange}
+                placeholder="Description"
+              />
+              {errors.Description && (
+                <small className="text-danger">{errors.Description}</small>
+              )}
+            </div>
             <div className="col-md">
               <label htmlFor="Status" className="form-label">
                 Status
@@ -141,6 +179,9 @@ const EditReligion = () => {
                 <option value="Active">Active</option>
                 <option value="Inactive">Inactive</option>
               </select>
+              {errors.Status && (
+                <small className="text-danger">{errors.Status}</small>
+              )}
             </div>
           </div>
 
@@ -152,7 +193,7 @@ const EditReligion = () => {
                 type="button"
                 onClick={handleUpdate}
               >
-                Edit
+                Add
               </button>
             </div>
           </div>
@@ -162,4 +203,4 @@ const EditReligion = () => {
   );
 };
 
-export default EditReligion;
+export default EditQualification;

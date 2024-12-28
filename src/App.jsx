@@ -12,6 +12,9 @@ import EditCities from "./components/Cities/EditCities";
 import Religion from "./components/Religions/Religion";
 import AddReligion from "./components/Religions/AddReligion";
 import EditReligion from "./components/Religions/EditReligion";
+import Qualification from "./components/Qualification/Qualification";
+import AddNewQualification from "./components/Qualification/AddNewQualification";
+import EditQualification from "./components/Qualification/EditQualification";
 
 const App = () => {
   const router = createBrowserRouter([
@@ -58,6 +61,18 @@ const App = () => {
         {
           path: "/religion/edit-religion",
           element: <EditReligion />,
+        },
+        {
+          path: "/qualification",
+          element: <Qualification />,
+        },
+        {
+          path: "/qualification/add-qualification",
+          element: <AddNewQualification />,
+        },
+        {
+          path: "/qualification/edit-qualification",
+          element: <EditQualification />,
         },
       ],
     },

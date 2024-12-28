@@ -271,7 +271,7 @@ const SearchOption = () => {
                   <th>Gender</th>
                   <th>Mobile No</th>
                   <th>Uploaded Documents</th>
-                  <th>CONVERTED TO CR NO.</th> {/* Added Registration Type */}
+                  <th>CONVERTED TO CR NO.</th> 
                   <th>CR No.</th>
                   <th>Print</th>
                 </tr>
@@ -297,7 +297,7 @@ const SearchOption = () => {
                         </a>
                       </td>
                       <td>{row.registrationType}</td>{" "}
-                      {/* Display Registration Type */}
+                     
                       <td>{row.crNo}</td>
                       <td>
                         <a
