@@ -1,20 +1,16 @@
 import React, { useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
 import { Paginator } from "primereact/paginator";
-import { filterqualifications } from "../../redux/QualificationSlice";
-import { FaEdit } from "react-icons/fa";
-import { MdPreview } from "react-icons/md";
 import {
   //validateDegreeNameAndShortName,
   //validateDescription,
   sanitizeInput,
   capitalizeWords,
 } from "../Validation";
-
-const Qualification = () => {
+import { filterusers } from "../../redux/usersSlice";
+const UserAny = () => {
   const dispatch = useDispatch();
-  const qualifications = useSelector((state) => state.qualifications);
+  const users = useSelector((state) => state.users);
   const [formData, setFormData] = useState({
     Location: "",
     DegreeName: "",
@@ -22,20 +18,13 @@ const Qualification = () => {
     Description: "",
     Status: "Active",
   });
-  const [errors, setErrors] = useState({
-    DegreeShortName: "",
-    Description: "",
-  });
   const [first, setFirst] = useState(0);
   const [rows, setRows] = useState(10);
   const [submitted, setSubmitted] = useState(false);
-  const qualificationsToDisplay =
-    qualifications.filteredqualifications.length > 0
-      ? qualifications.filteredqualifications
-      : qualifications.qualifications;
+  const usersToDisplay =
+    users.filteredusers.length > 0 ? users.filteredusers : users.users;
 
-  const totalRecords = qualificationsToDisplay.length;
-
+  const totalRecords = usersToDisplay.length;
   const handleChange = (e) => {
     const { name, value } = e.target;
     let capitalizedValue = capitalizeWords(value);
@@ -47,31 +36,23 @@ const Qualification = () => {
       [name]: sanitizedValue,
     }));
   };
-
-  const handleSearch = () => {
-    dispatch(filterqualifications(formData));
-    setFirst(0);
-  };
   const onPageChange = (event) => {
     setFirst(event.first);
     setRows(event.rows);
   };
-  const paginatedqualifications = useMemo(() => {
-    return qualificationsToDisplay.slice(first, first + rows);
-  }, [qualificationsToDisplay, first, rows]);
+  const paginatedusers = useMemo(() => {
+    return usersToDisplay.slice(first, first + rows);
+  }, [usersToDisplay, first, rows]);
+  const handleSearch = () => {
+    dispatch(filterusers(formData));
+    setFirst(0);
+  };
   return (
     <div className="container-fluid">
       <div className="breadcrumb-header ms-1 me-1 gap-1 mt-4 justify-content-start align-items-center d-flex">
         <h2 className="fs-4 " style={{ color: "#5E5873" }}>
-          Qualification
+          Clinical Anaylist
         </h2>
-        <span className="ms-2 me-2 mb-2 text-secondary opacity-75">|</span>
-        <Link
-          to="/qualification/add-qualification"
-          className="custom-link text-decoration-none mb-1"
-        >
-          Add New
-        </Link>
       </div>
       <div className="card border-0 rounded shadow-lg ms-1 me-1">
         <div className="card-body">
@@ -183,14 +164,12 @@ const Qualification = () => {
                 <th>Location</th>
                 <th>DegreeName: </th>
                 <th>DegreeShortName: </th>
-                <th>Description</th>
-                <th>Status</th>
-                <th>Action</th>
+                <th>Description</th> <th>Status</th>
               </tr>
             </thead>
             <tbody>
-              {paginatedqualifications.length > 0 ? (
-                paginatedqualifications.map((qualification, index) => (
+              {paginatedusers.length > 0 ? (
+                paginatedusers.map((qualification, index) => (
                   <tr key={qualification.qualificationId}>
                     <td>{index + 1}</td>
                     <td>{qualification.Location}</td>
@@ -198,31 +177,12 @@ const Qualification = () => {
                     <td>{qualification.DegreeShortName}</td>
                     <td>{qualification.Description}</td>
                     <td>{qualification.Status}</td>
-                    <td>
-                      <Link
-                        to="/qualification/show-qualification"
-                        state={{ qualification }}
-                        className="custom-link text-decoration-none"
-                      >
-                        <MdPreview size={25} />
-                      </Link>
-                      <span className="ms-2 me-2 mb-2 text-secondary opacity-75">
-                        |
-                      </span>
-                      <Link
-                        to="/qualification/edit-qualification"
-                        state={{ qualification }}
-                        className="custom-link text-decoration-none"
-                      >
-                        <FaEdit size={20} />
-                      </Link>
-                    </td>
                   </tr>
                 ))
               ) : (
                 <tr>
                   <td colSpan="8" className="text-center">
-                    No Religions Found
+                    No User Found
                   </td>
                 </tr>
               )}
@@ -241,4 +201,4 @@ const Qualification = () => {
   );
 };
 
-export default Qualification;
+export default UserAny;

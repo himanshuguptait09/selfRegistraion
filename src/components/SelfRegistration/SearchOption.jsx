@@ -296,7 +296,7 @@ const SearchOption = () => {
                           {row.document}
                         </a>
                       </td>
-                      <td>{row.registrationType}</td>{" "}
+                      <td>{row.registrationType}</td>
                      
                       <td>{row.crNo}</td>
                       <td>

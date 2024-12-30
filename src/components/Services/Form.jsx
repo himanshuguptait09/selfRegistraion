@@ -23,7 +23,7 @@ const Form = () => {
     GroupName: "",
     GroupshortName: "",
     Description: "",
-    Status: "Active", // Default
+    Status: "Active",
     GroupHead: "",
   });
 
@@ -35,7 +35,7 @@ const Form = () => {
 
   const nameValidationRegex =
     /^[A-Z][a-zA-Z0-9]*(?:[ ,./\\()\-]?[A-Za-z0-9]+)*(?: [A-Z][a-zA-Z0-9]*(?:[ ,./\\()\-]?[A-Za-z0-9]+)*)*$/;
-
+  const [submitted, setSubmitted] = useState(false);
   const handleChange = (e) => {
     const { name, value } = e.target;
     const processValue = (value) => {
@@ -49,7 +49,7 @@ const Form = () => {
     };
 
     setErrors((prevErrors) => ({ ...prevErrors, [name]: "" }));
-    setSubmitted(false); // Reset the submitted state if user starts editing
+    setSubmitted(false);
 
     switch (name) {
       case "GroupName":
@@ -95,7 +95,6 @@ const Form = () => {
       }
     }
   };
-
   const handlePickerChange = (value) => {
     setFormData((prev) => ({
       ...prev,
@@ -103,7 +102,7 @@ const Form = () => {
     }));
   };
   const toast = useRef(null);
-  const [submitted, setSubmitted] = useState(false);
+
   const handleSave = () => {
     setSubmitted(true);
 

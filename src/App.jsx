@@ -15,6 +15,8 @@ import EditReligion from "./components/Religions/EditReligion";
 import Qualification from "./components/Qualification/Qualification";
 import AddNewQualification from "./components/Qualification/AddNewQualification";
 import EditQualification from "./components/Qualification/EditQualification";
+import ShowQualification from "./components/Qualification/ShowQualification";
+import UserAny from "./components/UserAnalytics/UserAny";
 
 const App = () => {
   const router = createBrowserRouter([
@@ -71,8 +73,16 @@ const App = () => {
           element: <AddNewQualification />,
         },
         {
+          path: "/qualification/show-qualification",
+          element: <ShowQualification />,
+        },
+        {
           path: "/qualification/edit-qualification",
           element: <EditQualification />,
+        },
+        {
+          path: "/clinicalanaylist",
+          element: <UserAny />,
         },
       ],
     },

@@ -1,0 +1,13 @@
+/* Default styles */
+.invalid-feedback {
+	display: none;  /* Hide by default */
+	color: red;
+	font-size: 0.875em;
+  }
+  
+  /* Show error only when hovered over the invalid field */
+  .form-control.is-invalid:hover + .invalid-feedback,
+  .form-select.is-invalid:hover + .invalid-feedback {
+	display: block;  /* Display error on hover */
+  }
+  

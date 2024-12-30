@@ -22,13 +22,11 @@ const ServiceGroup = () => {
     WithEffectFrom: "",
     WithEffectTo: "",
     ServicesLtdPerDay: "",
-
     RateEditable: false,
     IsConsultantResources: false,
     IsTaxApplicable: false,
     DicountApplicable: false,
     QuantityEditable: false,
-
     Statuss: "",
   });
   const [errors, setErrors] = useState({

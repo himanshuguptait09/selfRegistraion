@@ -88,7 +88,13 @@ const AddReligion = () => {
                 Location
               </label>
               <select
-                className="form-select"
+                className={`form-select ${
+                  errors.Location
+                    ? "is-invalid"
+                    : formData.Location
+                    ? "is-valid"
+                    : ""
+                }`}
                 id="Location"
                 name="Location"
                 value={formData.Location}
@@ -101,7 +107,7 @@ const AddReligion = () => {
                 <option value="Semi">Semi</option>
               </select>
               {errors.Location && (
-                <small className="text-danger">{errors.Location}</small>
+                <small className="invalid-feedback">{errors.Location}</small>
               )}
             </div>
 
@@ -110,7 +116,13 @@ const AddReligion = () => {
                 Religion
               </label>
               <select
-                className="form-select"
+                className={`form-select ${
+                  errors.Religion
+                    ? "is-invalid"
+                    : formData.Religion
+                    ? "is-valid"
+                    : ""
+                }`}
                 id="Religion"
                 name="Religion"
                 value={formData.Religion}
@@ -135,7 +147,13 @@ const AddReligion = () => {
               <select
                 id="Status"
                 name="Status"
-                className="form-select"
+                className={`form-select ${
+                  errors.Status
+                    ? "is-invalid"
+                    : formData.Status
+                    ? "is-valid"
+                    : ""
+                }`}
                 value={formData.Status}
                 onChange={handleChange}
               >

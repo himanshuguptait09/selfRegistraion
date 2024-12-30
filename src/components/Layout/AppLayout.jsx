@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import { useState, useRef } from "react";
 import { NavLink, Outlet } from "react-router-dom";
-import { FaUserCircle } from "react-icons/fa";
+import { FaClinicMedical, FaUserCircle } from "react-icons/fa";
 // import UserLogo from "/assets/user.jpg"
 import { FaPowerOff, FaHospitalUser, FaUserClock } from "react-icons/fa";
 import { FaUserDoctor, FaLocationDot, FaMapLocationDot } from "react-icons/fa6";
@@ -181,6 +181,17 @@ const AppLayout = () => {
                 {sidebarOpen && <span className="ms-2">Qualification </span>}
               </NavLink>
             </li>
+            <li className="nav-item">
+              <NavLink
+                to="/clinicalanaylist"
+                className="nav-link text-white d-flex align-items-center"
+              >
+                <FaClinicMedical AppRegistration className="icon" />
+                {sidebarOpen && (
+                  <span className="ms-2">Clinical anaylist </span>
+                )}
+              </NavLink>
+            </li>
           </ul>
         </div>
       </div>
@@ -297,6 +308,15 @@ const AppLayout = () => {
                 onClick={closeOffcanvas}
               >
                 <GiGreekTemple className="me-3" /> Religion
+              </NavLink>
+            </li>
+            <li className="nav-item">
+              <NavLink
+                to="/clinicalanaylist"
+                className="nav-link text-white d-flex align-items-center"
+                onClick={closeOffcanvas}
+              >
+                <FaClinicMedical className="me-3" /> Clinical anaylist
               </NavLink>
             </li>
             <li className="nav-item">
